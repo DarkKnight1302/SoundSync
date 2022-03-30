@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="../css/libraries/nice-select.css">
+        <link rel="stylesheet" href="../css/popup.css">
+    </head>
+    <body>
+        <div id='navigation'>
+            <div id='logo'><img src='../assets/extension-icons/sound-32.png'>Sound Sync
+            </div>
+            
+            <!-- <div id='more'><img src='/assets/images/popup/popup-more.svg'></div> -->
+        </div>
+        <div id='body'>
+            <label for="mic-select" id="mic-label">Microphone</label>
+            <select id="mic-select"><option value='disabled'>Disabled</option></select>
+            <button id="record" style="margin-top: 10px">Recieve</button>
+            <button id="share" style="margin-top: 10px">Share</button>
+        </div>
+        <script src="../js/libraries/jquery-3.5.1.min.js"></script>
+        <script src="../js/libraries/jquery.nice-select.min.js"></script>
+        <script src="../js/popup.js"></script>
+    </body>
+</html>
