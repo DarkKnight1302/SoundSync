@@ -22,7 +22,6 @@ var quality = "max";
 var fps = 60;
 var camerasize = "small-size";
 var camerapos = {x:"10px", y:"10px"};
-var isMac = navigator.platform.toUpperCase().indexOf('MAC')>=0;
 const streamSaver = window.streamSaver;
 
 // Get list of available audio devices
@@ -57,80 +56,6 @@ chrome.runtime.onInstalled.addListener(function() {
     });
 });
 
-// // Set up recording
-// function newRecording(stream) {
-//     // Show recording icon
-//     chrome.browserAction.setIcon({path: "../assets/extension-icons/logo-32-rec.png"});
-    
-//     // Start Media Recorder
-//     if (quality == "max") {
-//         mediaConstraints = {
-//             mimeType: 'audio/webm'
-//         }
-//     } else {
-//         mediaConstraints = {
-//             mimeType: 'audio/webm',
-//             bitsPerSecond: 1000
-//         }
-//     }
-//     mediaRecorder = new MediaRecorder(stream, mediaConstraints);
-//     injectContent(true);
-// }
-
-// // Save recording
-// function saveRecording(url, blobs) {
-//     newwindow = window.open('../html/videoeditor.html');
-//     newwindow.url = url;
-// 		newwindow.recordedBlobs = blobs;
-// }
-
-// Stop recording
-// function endRecording(stream, writer, recordedBlobs) {
-
-// 		// Get video duration
-// 		chrome.storage.sync.get(['start', 'total'], function(result) {
-// 			chrome.storage.sync.set({
-// 					total: Date.now() - result.start + result.total
-// 			});
-// 		});
-
-//     // Show default icon
-//     chrome.browserAction.setIcon({path: "../assets/extension-icons/logo-32.png"});
-    
-//     // Hide injected content
-//     recording = false;
-//     chrome.tabs.getSelected(null, function(tab) {
-//         chrome.tabs.sendMessage(tab.id, {
-//             type: "end"
-//         });
-//     });
-
-//     // Stop tab and microphone streams
-//     stream.getTracks().forEach(function(track) {
-//         track.stop();
-//     });
-//     if (micable) {
-//         micstream.getTracks().forEach(function(track) {
-//             track.stop();
-//         });
-//     }
-
-// 		// Show download shelf again
-// 		// chrome.downloads.setShelfEnabled(true);
-
-// 		// setTimeout(() => {
-// 		// 	writer.close();
-// 		// 	chrome.downloads.search({limit: 1}, function(data) {
-// 		// 		// Save recording if requested
-// 		// 		if (!cancel) {
-// 		// 			saveRecording("file://"+data[0].filename, recordedBlobs);
-// 		// 		} else {
-// 		// 			chrome.downloads.removeFile(data[0].id);
-// 		// 		}
-// 		// 	});
-// 		// }, 1000)
-// }
-
 // Start recording the current tab
 function getTab() {
     chrome.tabs.getSelected(null, function(tab) {
@@ -155,70 +80,6 @@ function getTab() {
                 });
             });
         });
-
-        //     // Combine tab and microphone audio
-        //     output = new MediaStream();
-        //     syssource = audioCtx.createMediaStreamSource(stream);
-        //     if (micable) {
-        //         micsource.connect(destination);
-        //     }
-        //     syssource.connect(destination);
-        //     output.addTrack(destination.stream.getAudioTracks()[0]);
-            
-        //     // Keep playing tab audio
-        //     this.context = new AudioContext();
-        //     this.stream = this.context.createMediaStreamSource(stream);
-        //     this.stream.connect(this.context.destination);
-            
-        //     // Set up media recorder & inject content
-        //     newRecording(output)
-
-		// 				// Hide the downloads shelf
-		// 				chrome.downloads.setShelfEnabled(false);
-
-		// 				// This will write the stream to the filesystem asynchronously
-		// 				const { readable, writable } = new TransformStream({
-		// 						transform: (chunk, ctrl) => chunk.arrayBuffer().then(b => ctrl.enqueue(new Uint8Array(b)))
-		// 				})
-		// 				const writer = writable.getWriter()
-        // 		readable.pipeTo(streamSaver.createWriteStream('screenity.webm'));
-            
-                
-        //     // Record tab stream
-        //     // mediaRecorder.onaudioprocess = function (e) {
-        //     //     var source = e.inputBuffer;
-        //     //     var res = ggwave.decode(instance, convertTypedArray(new Float32Array(source.getChannelData(0)), Int8Array));
-        //     //     if (res) {
-        //     //         alert(res);
-        //     //     }
-        //     // }
-            
-		// 				var recordedBlobs = [];
-        //     mediaRecorder.ondataavailable = event => {
-        //         if (event.data && event.data.size > 0) {
-		// 								//writer.write(event.data);
-		// 								recordedBlobs.push(event.data);
-        //                                 var data = new Float32Array(event.data);
-                                        
-        //                                 // var res = ggwave.decode(instance, convertTypedArray(new Float32Array(event.data), Int8Array));
-        //                                 // if (res) {
-        //                                 //  alert(res);
-        //                                 // }
-                                        
-        //         }
-                
-        //     }
-
-        //     // When the recording is stopped
-        //     mediaRecorder.onstop = () => {
-        //         endRecording(stream, writer, recordedBlobs);
-        //     }
-            
-        //     // Stop recording if stream is ended when tab is closed
-        //     stream.getVideoTracks()[0].onended = function() {
-        //         mediaRecorder.stop();
-        //     }
-        // });
     });
 }
 
