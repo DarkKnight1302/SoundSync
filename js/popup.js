@@ -4,7 +4,6 @@ $(document).ready(function(){
     // Set up custom dropdowns
     $("#camera-select").niceSelect();
     $("#mic-select").niceSelect();
-    
     // Get default settings (set by the user)
     chrome.storage.sync.get(null, function(result) {
         if (!result.toolbar) {
@@ -75,11 +74,11 @@ $(document).ready(function(){
         });
         }); 
     }
+    var count = 0;
 
     // Request extension audio access if website denies it (for background)
     function audioRequest() {
         navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
-           alert("acesss given in popup.js");
            var audiodevices = [];
             navigator.mediaDevices.enumerateDevices().then(function(devices) {
               devices.forEach(function(device) {
@@ -90,7 +89,10 @@ $(document).ready(function(){
               getAudio(audiodevices);
             });
         }).catch(function(error){
-            alert(error.message);
+            if (count == 0) {
+                chrome.runtime.sendMessage({type:"camera-request"});
+            }
+            count = 1;
             $("#mic-select").html("<option value='disabled'>"+chrome.i18n.getMessage("disabled_allow_access")+"</option>");
         });
     }
@@ -118,71 +120,13 @@ $(document).ready(function(){
     }
     
     // Get available camera devices
-    // function getCamera(camera) {
-    //     $("#camera-select").html("<option value='disabled'>"+chrome.i18n.getMessage("disabled")+"</option>");
-    //     camera.forEach(function(device) {
-    //         if (device.label == "Disabled") {
-    //             $("#camera-select").append("<option value='"+device.id+"'>"+chrome.i18n.getMessage("disabled")+"</option>");
-    //         } else {
-    //             $("#camera-select").append("<option value='"+device.id+"'>"+device.label+"</option>");   
-    //         }
-    //     });
-    //     $("#camera-select").niceSelect('update');
-    //     chrome.storage.sync.get(['camera'], function(result) {
-    //         if (result.camera != 0 && result.camera != "disabled-access") {
-    //             $('#camera-select').val(result.camera).niceSelect('update');
-    //             if ($(".type-active").attr("id") == "camera-only" && $("#camera-select").val() == "disabled") {
-    //                 $("#record").addClass("record-disabled");
-    //             } else {
-    //                 $("#record").removeClass("record-disabled");
-    //             }
-    //         } else {
-    //             $('#camera-select').val($("#camera-select option:nth-child(2)").val()).niceSelect('update');
-    //             chrome.runtime.sendMessage({type: "update-camera", id:$("#camera-select").val()});
-    //         }
-    //     });
-    // }
-    
-    // Get available camera devices
     chrome.tabs.getSelected(null, function(tab) {
         chrome.tabs.sendMessage(tab.id, {
             type: "camera-request"
         });
     });
-    
-    // // Check if recording is ongoing
-    // chrome.runtime.sendMessage({type: "record-request"}, function(response){
-    //     recording = response.recording;
-    //     if (response.recording) {
-    //         $("#record").html(chrome.i18n.getMessage("stop_recording"));
-    //         $("#record").addClass("record-stop");
-    //     }
-    // });
-    
-    // // Check if current tab is unable to be recorded
-    // chrome.tabs.query({active: true, lastFocusedWindow: true}, tabs => {
-    //     if (tabs[0].url.includes("chrome://") || tabs[0].url.includes("chrome-extension://") || tabs[0].url.includes("chrome.com") || tabs[0].url.includes("chrome.google.com")) {
-    //         $("#record").addClass("record-disabled");
-    //         $("#record").html(chrome.i18n.getMessage("cannot_record"));
-    //     }
-    // });
-    
+ 
     // Modify settings
-    $("#flip").on("change", function(){
-        chrome.storage.sync.set({flip: this.checked});
-        chrome.runtime.sendMessage({type: "flip-camera", enabled:this.checked});
-    });
-    $("#push").on("change", function(){
-        chrome.storage.sync.set({pushtotalk: this.checked});
-        chrome.runtime.sendMessage({type: "push-to-talk", enabled:this.checked});
-    });
-    $("#countdown").on("change", function(){
-        chrome.storage.sync.set({countdown: this.checked});
-    });
-    $("#persistent").on("change", function(){
-        chrome.storage.sync.set({toolbar: !this.checked});
-        chrome.runtime.sendMessage({type: "switch-toolbar", enabled:!this.checked});
-    });
     $("#camera-select").on("change", function(){
         chrome.runtime.sendMessage({type: "update-camera", id:$("#camera-select").val()});
         if ($(".type-active").attr("id") == "camera-only" && ($("#camera-select").val() == "disabled" || $("#camera-select").val() == "disabled-access")) {
@@ -342,11 +286,12 @@ $(document).ready(function(){
             
             // Allow user to start recording
         } else if (request.type == "sources-loaded") {
-            chrome.tabs.getSelected(null, function(tab) {
-                chrome.tabs.sendMessage(tab.id, {
-                    type: "camera-request"
-                });
-            });
+            audioRequest();  
+            // chrome.tabs.getSelected(null, function(tab) {
+            //     chrome.tabs.sendMessage(tab.id, {
+            //         type: "camera-request"
+            //     });
+            // });
         } else if (request.type == "sources-audio-noaccess") {
             audioRequest();   
         }

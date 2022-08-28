@@ -3,7 +3,6 @@ $(document).ready(function(){
     var micon = true;
     var tabaudioon = true;
     var audiodevices = [];
-    
     // Get defaults
     function getDefaults() {
         chrome.storage.sync.get(['mic'], function(result) {

@@ -1,6 +1,5 @@
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 window.OfflineAudioContext = window.OfflineAudioContext || window.webkitOfflineAudioContext;
-
 var context = null;
 var recorder = null;
 
@@ -64,7 +63,6 @@ function onSend() {
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.type == "sound_blob") {
-        //alert("Inside");
         init();
 
     navigator.mediaDevices.getUserMedia({audio:true}).then(function (e) {

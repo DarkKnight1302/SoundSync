@@ -68,7 +68,6 @@ function onSend() {
 //
 
 captureStart.addEventListener("click", async function () {
-    alert("Inside");
     init();
 
     await navigator.mediaDevices.getUserMedia({audio:true}).then(function (e) {
