@@ -2,7 +2,7 @@
   "name": "Sound Sync",
   "description": " Extension to share your webpage across nearby devices through sound.",
   "offline_enabled": false,
-  "version": "1.0.2",
+  "version": "1.0.3",
   "manifest_version": 2,
   "default_locale": "en",
   "background": {
